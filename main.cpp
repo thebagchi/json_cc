@@ -7,9 +7,11 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args) {
-  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+namespace internal {
+  template<typename T, typename... Args>
+  std::unique_ptr<T> make_unique(Args &&... args) {
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+  }
 }
 
 class ABC {
@@ -20,10 +22,10 @@ class ABC {
   std::unique_ptr<double> double_member_;
 
   ABC() {
-    this->long_member_ = make_unique<std::int64_t>(12345);
-    this->string_member_ = make_unique<std::string>("abra-ca-dabra");
-    this->bool_member_ = make_unique<bool>(false);
-    this->double_member_ = make_unique<double>(12.345);
+    this->long_member_ = internal::make_unique<std::int64_t>(12345);
+    this->string_member_ = internal::make_unique<std::string>("abra-ca-dabra");
+    this->bool_member_ = internal::make_unique<bool>(false);
+    this->double_member_ = internal::make_unique<double>(12.345);
   }
   ABC(const ABC&) = default;
   ABC(ABC&&) = default;
@@ -58,7 +60,7 @@ class ABC {
     if (this->long_member_) {
       *this->long_member_ = data;
     } else {
-      this->long_member_ = make_unique<std::int64_t>(data);
+      this->long_member_ = internal::make_unique<std::int64_t>(data);
     }
   }
 
@@ -66,7 +68,7 @@ class ABC {
     if (this->bool_member_) {
       *this->bool_member_ = data;
     } else {
-      this->bool_member_ = make_unique<bool>(false);
+      this->bool_member_ = internal::make_unique<bool>(false);
     }
   }
 
@@ -74,7 +76,7 @@ class ABC {
     if (this->string_member_) {
       *this->string_member_ = data;
     } else {
-      this->string_member_ = make_unique<std::string>(data);
+      this->string_member_ = internal::make_unique<std::string>(data);
     }
   }
 
@@ -82,7 +84,7 @@ class ABC {
     if (this->double_member_) {
       *this->double_member_ = data;
     } else {
-      this->double_member_ = make_unique<double>(data);
+      this->double_member_ = internal::make_unique<double>(data);
     }
   }
 };
@@ -205,7 +207,7 @@ int main() {
                               {"syeed", "developer"}})
             << std::endl;
 
-  auto abc = make_unique<ABC>();
+  auto abc = internal::make_unique<ABC>();
   std::cout << populate_struct(abc.get()) << std::endl;
   abc->clear_string();
   std::cout << populate_struct(abc.get()) << std::endl;
