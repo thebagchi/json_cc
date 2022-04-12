@@ -200,11 +200,11 @@ int main() {
   std::cout << populate_double(12.345) << std::endl;
   std::cout << populate_long(12345) << std::endl;
 
-  std::cout << populate_array({"varun", "argha", "syeed"}) << std::endl;
+  std::cout << populate_array({"l1", "l2", "l3"}) << std::endl;
 
-  std::cout << populate_dict({{"varun", "developer"},
-                              {"argha", "principal"},
-                              {"syeed", "developer"}})
+  std::cout << populate_dict({{"k1", "v1"},
+                              {"k2", "v2"},
+                              {"k3", "v3"}})
             << std::endl;
 
   auto abc = internal::make_unique<ABC>();
