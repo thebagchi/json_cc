@@ -24,8 +24,7 @@ struct Props {
 };
 
 template<typename C, typename T>
-constexpr Props<C, T> prop(T C::*member, const char *name,
-                           bool required = false) {
+constexpr Props<C, T> prop(T C::*member, const char *name, bool required = false) {
   return Props<C, T>{member, name, required};
 }
 
@@ -143,7 +142,7 @@ class ABC {
                       prop(&ABC::bool_member_, "boolean_value"),
                       prop(&ABC::def_member_, "def_value"),
                       prop(&ABC::list_member_, "list_value"),
-                      prop(&ABC::dict_member_, "dict_value"));
+                      prop(&ABC::dict_member_, "dict_value"), true);
 };
 
 std::string serialize(const rapidjson::Document &document,

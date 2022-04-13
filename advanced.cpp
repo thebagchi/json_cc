@@ -7,12 +7,12 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
 
-template <typename T, typename... Args>
+template<typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args &&...args) {
   return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
-template <typename C, typename T>
+template<typename C, typename T>
 struct Props {
   constexpr Props(T C::*member, const char *name, bool required)
       : member{member}, name{name}, required{required} {
@@ -24,48 +24,48 @@ struct Props {
   bool required;
 };
 
-template <typename C, typename T>
+template<typename C, typename T>
 constexpr Props<C, T> prop(T C::*member, const char *name,
                            bool required = false) {
   return Props<C, T>{member, name, required};
 }
 
-template <typename T>
+template<typename T>
 int tuple_size(T tuple) {
   return std::tuple_size<T>{};
 }
 
 using Allocator = rapidjson::Document::AllocatorType;
 using ValuePtr = rapidjson::Value *;
-template <typename T>
+template<typename T>
 void Write(ValuePtr value, Allocator &allocator, T *object) {
   value->SetObject();
   Write(T::properties(), allocator, object, value);
 }
 
-template <>
+template<>
 void Write<std::string>(ValuePtr value, Allocator &allocator,
                         std::string *object) {
   value->SetString(object->data(), object->length(), allocator);
 }
 
-template <>
+template<>
 void Write<std::int64_t>(ValuePtr value, Allocator &allocator,
                          std::int64_t *object) {
   value->SetInt64(*object);
 }
 
-template <>
+template<>
 void Write<double>(ValuePtr value, Allocator &allocator, double *object) {
   value->SetDouble(*object);
 }
 
-template <>
+template<>
 void Write<bool>(ValuePtr value, Allocator &allocator, bool *object) {
   value->SetBool(*object);
 }
 
-template <typename T, std::size_t N, typename O>
+template<typename T, std::size_t N, typename O>
 struct W {
   static void E(const T &t, Allocator &a, O *o, ValuePtr v) {
     constexpr size_t R = N - 1;
@@ -82,14 +82,14 @@ struct W {
   }
 };
 
-template <typename T, typename O>
+template<typename T, typename O>
 struct W<T, 0, O> {
   static void E(const T &t, Allocator &a, O *o, ValuePtr v) {
     // EMPTY
   }
 };
 
-template <typename T, typename O>
+template<typename T, typename O>
 void Write(const T &t, Allocator &a, O *o, ValuePtr v) {
   constexpr size_t N = std::tuple_size<T>::value;
   W<T, N, O>::E(t, a, o, v);

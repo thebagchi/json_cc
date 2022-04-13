@@ -8,10 +8,10 @@
 #include "rapidjson/writer.h"
 
 namespace internal {
-  template<typename T, typename... Args>
-  std::unique_ptr<T> make_unique(Args &&... args) {
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-  }
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args &&... args) {
+  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 }
 
 class ABC {
@@ -27,9 +27,9 @@ class ABC {
     this->bool_member_ = internal::make_unique<bool>(false);
     this->double_member_ = internal::make_unique<double>(12.345);
   }
-  ABC(const ABC&) = default;
-  ABC(ABC&&) = default;
-  ABC& operator=(const ABC&) = default;
+  ABC(const ABC &) = default;
+  ABC(ABC &&) = default;
+  ABC &operator=(const ABC &) = default;
   virtual ~ABC() = default;
 
   void clear_long() {
@@ -72,7 +72,7 @@ class ABC {
     }
   }
 
-  void set_string(const std::string& data) {
+  void set_string(const std::string &data) {
     if (this->string_member_) {
       *this->string_member_ = data;
     } else {
@@ -89,14 +89,14 @@ class ABC {
   }
 };
 
-std::string serialize(const rapidjson::Document& document) {
+std::string serialize(const rapidjson::Document &document) {
   rapidjson::StringBuffer buffer;
   rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
   document.Accept(writer);
   return buffer.GetString();
 }
 
-std::string populate_string(const std::string& data) {
+std::string populate_string(const std::string &data) {
   rapidjson::Document document;
   document.SetString(data.data(), data.length());
   return serialize(document);
@@ -126,10 +126,10 @@ std::string populate_double(double data) {
   return serialize(document);
 }
 
-std::string populate_array(const std::vector<std::string>& array) {
+std::string populate_array(const std::vector<std::string> &array) {
   rapidjson::Document document;
   document.SetArray();
-  for (const auto& item : array) {
+  for (const auto &item : array) {
     rapidjson::Value value;
     value.SetString(item.data(), item.length(), document.GetAllocator());
     document.PushBack(value, document.GetAllocator());
@@ -137,10 +137,10 @@ std::string populate_array(const std::vector<std::string>& array) {
   return serialize(document);
 }
 
-std::string populate_dict(const std::map<std::string, std::string>& elements) {
+std::string populate_dict(const std::map<std::string, std::string> &elements) {
   rapidjson::Document document;
   document.SetObject();
-  for (const auto& item : elements) {
+  for (const auto &item : elements) {
     auto key = rapidjson::Value(rapidjson::kStringType);
     auto value = rapidjson::Value(rapidjson::kStringType);
     key.SetString(item.first.data(), item.first.length(),
@@ -152,11 +152,11 @@ std::string populate_dict(const std::map<std::string, std::string>& elements) {
   return serialize(document);
 }
 
-std::string populate_struct(const ABC* structure) {
+std::string populate_struct(const ABC *structure) {
   rapidjson::Document document;
   document.SetObject();
   if (structure->string_member_) {
-    const std::string& name = "string_member";
+    const std::string &name = "string_member";
     auto key = rapidjson::Value(rapidjson::kStringType);
     auto value = rapidjson::Value(rapidjson::kStringType);
     key.SetString(name.data(), name.length(), document.GetAllocator());
@@ -166,7 +166,7 @@ std::string populate_struct(const ABC* structure) {
     document.AddMember(key, value, document.GetAllocator());
   }
   if (structure->bool_member_) {
-    const std::string& name = "bool_member";
+    const std::string &name = "bool_member";
     auto key = rapidjson::Value(rapidjson::kStringType);
     auto value = rapidjson::Value();
     key.SetString(name.data(), name.length(), document.GetAllocator());
@@ -174,7 +174,7 @@ std::string populate_struct(const ABC* structure) {
     document.AddMember(key, value, document.GetAllocator());
   }
   if (structure->long_member_) {
-    const std::string& name = "long_member";
+    const std::string &name = "long_member";
     auto key = rapidjson::Value(rapidjson::kStringType);
     auto value = rapidjson::Value();
     key.SetString(name.data(), name.length(), document.GetAllocator());
@@ -182,7 +182,7 @@ std::string populate_struct(const ABC* structure) {
     document.AddMember(key, value, document.GetAllocator());
   }
   if (structure->double_member_) {
-    const std::string& name = "double_member";
+    const std::string &name = "double_member";
     auto key = rapidjson::Value(rapidjson::kStringType);
     auto value = rapidjson::Value();
     key.SetString(name.data(), name.length(), document.GetAllocator());
